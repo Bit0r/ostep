@@ -32,8 +32,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int nprocs = get_nprocs();
-    int nthrds = nprocs < argc - 1 ? nprocs : argc - 1;
+    int nprocs = get_nprocs(), nthrds = nprocs < argc - 1 ? nprocs : argc - 1;
     in_out_t *in_out = malloc(argc * sizeof(void *));
     thrd_t thrds[nthrds];
 
@@ -95,9 +94,6 @@ void mergeout(int nfiles, FILE *fps[]) {
             lseek(fd_cur, 0, SEEK_SET);
             sendfile(STDOUT_FILENO, fd_cur, NULL, size);
         }
-
-        // 关闭文件
-        fclose(fps[i]);
     }
 
     // 将最后一个文件输出
@@ -106,7 +102,6 @@ void mergeout(int nfiles, FILE *fps[]) {
     if (st.st_size) {
         lseek(fd_cur, 0, SEEK_SET);
         sendfile(STDOUT_FILENO, fd_cur, NULL, st.st_size);
-        fclose(fps[nfiles - 1]);
     }
 }
 
